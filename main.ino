@@ -13,6 +13,7 @@ const int BTNCOIN = 7;
 // LEDs
 const int LEDGREEN = 11;
 const int LEDRED = 12;
+const int LEDLIGHTNING = 13;
 
 // Positioning
 int maxPosRight = 105;
@@ -21,6 +22,7 @@ int maxPosArrow = 160;
 int moveDelayLeft = 5;
 int moveDelayRight = 5;
 int moveDelayArrow = 10;
+int creditCountFlashDelay = 250;
 
 // Credit 
 int creditCount = 0;
@@ -35,6 +37,8 @@ void setup() {
   pinMode(BTNCOIN, INPUT_PULLUP);
   pinMode(LEDGREEN, OUTPUT);
   pinMode(LEDRED, OUTPUT);
+  pinMode(LEDLIGHTNING, OUTPUT);
+  digitalWrite(LEDLIGHTNING, HIGH);
 }
 
 // Move right servo
@@ -127,9 +131,9 @@ void setLEDState(){
 void showCreditCount(){  
   setLEDState();
   for (int i = 0; i < creditCount; i++){
-    delay(500);
+    delay(creditCountFlashDelay);
     digitalWrite(LEDRED, HIGH);    
-    delay(500);
+    delay(creditCountFlashDelay);
     digitalWrite(LEDRED, LOW);    
   }  
 }
