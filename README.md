@@ -12,16 +12,17 @@ To get a package, the client has to insert a coin and push a button. The candi m
 
 ### Wiring
 
-| Component | Digital I/O |
-|-----------|-------------|
-| Servo Left  | 2 |
-| Servo Right | 3 |
-| Servo Arrow | 4 |
-| Taster Left | 5 |
-| Taster Reft | 6 |
-| Taster Coin | 7 |
-| LED Green   | 11 |
-| LED Red     | 12 |
+| Component     | Digital I/O |
+|---------------|-------------|
+| Servo Left    | 2 |
+| Servo Right   | 3 |
+| Servo Arrow   | 4 |
+| Taster Left   | 5 |
+| Taster Reft   | 6 |
+| Taster Coin   | 7 |
+| LED Green     | 11 |
+| LED Red       | 12 |
+| LED Lightning | 13 |
 
 ## The Code
 ...it is simple and documented, nothing special here.
