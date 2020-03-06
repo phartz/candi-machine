@@ -1,41 +1,26 @@
 #include <Servo.h>
 
-/*
- * Zero: 
- *   - LED Green  
- *   - LED Red
- *   - Servo Left
- *   - Servo Right
- *   - Servo Arrow
- *   - Taster Left
- *   - Taster Reft
- *   - Taster Coin
- *   
- * Positiv: 
- *   - Servo Left
- *   - Servo Right
- *   - Servo Coin
- */
-
 // Servo declaration
 Servo servoRight;
 Servo servoLeft;
 Servo servoArrow;
 
 // Buttons
-const int btnLeft = 5;
-const int btnRight = 6;
-const int btnCoin = 7;
+const int BTNLEFT = 5;
+const int BTNRIGHT = 6;
+const int BTNCOIN = 7;
 
 // LEDs
-const int ledGreen = 11;
-const int ledRed = 12;
+const int LEDGREEN = 11;
+const int LEDRED = 12;
 
 // Positioning
 int maxPosRight = 105;
 int minPosLeft = 125; 
 int maxPosArrow = 160;
-int moveDelay = 10;
+int moveDelayLeft = 5;
+int moveDelayRight = 5;
+int moveDelayArrow = 10;
 
 // Credit 
 int creditCount = 0;
@@ -45,42 +30,38 @@ void setup() {
   servoLeft.attach(2);
   servoRight.attach(3); 
   servoArrow.attach(4);
-  pinMode(btnLeft, INPUT_PULLUP);
-  pinMode(btnRight, INPUT_PULLUP);
-  pinMode(btnCoin, INPUT_PULLUP);
-  pinMode(ledGreen, OUTPUT);
-  pinMode(ledRed, OUTPUT);
+  pinMode(BTNLEFT, INPUT_PULLUP);
+  pinMode(BTNRIGHT, INPUT_PULLUP);
+  pinMode(BTNCOIN, INPUT_PULLUP);
+  pinMode(LEDGREEN, OUTPUT);
+  pinMode(LEDRED, OUTPUT);
 }
 
 // Move right servo
 void moveServoRight() {
   for (int i = 0; i < maxPosRight; i++) {
     servoRight.write(i);
-    delay(moveDelay);
+    delay(moveDelayRight);
   }
-  for (int i = maxPosRight; i >= 0; i--) {
-    servoRight.write(i);
-    delay(moveDelay);
-  }  
+  // Move back fast
+  servoRight.write(0);
 }
 
 // Move servo left
 void moveServoLeft() {
   for (int i = minPosLeft; i >= 0; i--) {
     servoLeft.write(i);
-    delay(moveDelay);
+    delay(moveDelayLeft);
   }  
-  for (int i = 0; i < minPosLeft; i++) {
-    servoLeft.write(i);
-    delay(moveDelay);
-  }
+  // Move back fast
+  servoLeft.write(minPosLeft);
 }
 
 // Point arrow to right
 void moveArrowToRight() {
   for (int i = maxPosArrow / 2; i <= maxPosArrow; i++){
     servoArrow.write(i);
-    delay(moveDelay);    
+    delay(moveDelayArrow);    
   }
 }
 
@@ -88,7 +69,7 @@ void moveArrowToRight() {
 void moveArrowFromRight(){
   for (int i = maxPosArrow; i >= maxPosArrow / 2; i--){
     servoArrow.write(i);
-    delay(moveDelay);    
+    delay(moveDelayArrow);    
   }
   
 }
@@ -97,7 +78,7 @@ void moveArrowFromRight(){
 void moveArrowToLeft() {
   for (int i = maxPosArrow / 2; i > 0; i--){
     servoArrow.write(i);
-    delay(moveDelay);    
+    delay(moveDelayArrow);    
   }
 }
 
@@ -105,18 +86,18 @@ void moveArrowToLeft() {
 void moveArrowFromLeft() {
   for (int i = 0; i <= maxPosArrow / 2; i++){
     servoArrow.write(i);
-    delay(moveDelay);    
+    delay(moveDelayArrow);    
   }
 }
 
 // blink LEDs
 void blinkLEDs(){
-  for (int i = 0; i < 5; i++){
-    digitalWrite(ledGreen, HIGH);
-    digitalWrite(ledRed, LOW);
+  for (int i = 0; i < 2; i++){
+    digitalWrite(LEDGREEN, HIGH);
+    digitalWrite(LEDRED, LOW);
     delay(200);
-    digitalWrite(ledGreen, LOW);
-    digitalWrite(ledRed, HIGH);
+    digitalWrite(LEDGREEN, LOW);
+    digitalWrite(LEDRED, HIGH);
     delay(200);
   }
 }
@@ -129,20 +110,16 @@ bool checkCredit() {
 // Increment the credit count
 void incCredit() {
   creditCount++;
-  delay(200);
-  digitalWrite(ledGreen, HIGH); 
-  delay(100);
-  digitalWrite(ledRed, LOW); 
 }
 
 // Flash red LED as many credit is left
 void setLEDState(){  
   if (creditCount > 0) {
-    digitalWrite(ledGreen, HIGH);
-    digitalWrite(ledRed, LOW);
+    digitalWrite(LEDGREEN, HIGH);
+    digitalWrite(LEDRED, LOW);
   } else{
-    digitalWrite(ledGreen, LOW);
-    digitalWrite(ledRed, HIGH);
+    digitalWrite(LEDGREEN, LOW);
+    digitalWrite(LEDRED, HIGH);
   }
 }
 
@@ -151,9 +128,9 @@ void showCreditCount(){
   setLEDState();
   for (int i = 0; i < creditCount; i++){
     delay(500);
-    digitalWrite(ledRed, HIGH);    
+    digitalWrite(LEDRED, HIGH);    
     delay(500);
-    digitalWrite(ledRed, LOW);    
+    digitalWrite(LEDRED, LOW);    
   }  
 }
 
@@ -171,11 +148,6 @@ void deliverLeftColumn(){
   moveArrowToLeft();  
   moveServoLeft();
   moveArrowFromLeft();
-  delay(200);
-  digitalWrite(ledGreen, HIGH);
-  digitalWrite(ledRed, LOW);
-  delay(200);
-  digitalWrite(ledGreen, LOW);  
   decCredit();
   showCreditCount();  
 }
@@ -186,12 +158,7 @@ void deliverRightColumn(){
   blinkLEDs();
   moveArrowToRight();
   moveServoRight();  
-  moveArrowFromRight();
-  delay(200);
-  digitalWrite(ledGreen, HIGH);
-  digitalWrite(ledRed, LOW);
-  delay(200);
-  digitalWrite(ledGreen, LOW);      
+  moveArrowFromRight();     
   decCredit();
   showCreditCount();  
 }
@@ -209,18 +176,22 @@ void coinWasInserted(){
   showCreditCount();  
 }
 
+// Check if coin was inserted
+bool checkBtnCoin(){
+  return digitalRead(BTNCOIN) == LOW;
+}
+
 // The main loop
 void loop() {
   moveServoToBasePos();
   setLEDState();
 
   // Check wether one button was pushed
-  int btnRightRead = digitalRead(btnRight);
-  int btnLeftRead = digitalRead(btnLeft);
-  int btnCoinRead = digitalRead(btnCoin);
+  int btnRightRead = digitalRead(BTNRIGHT);
+  int btnLeftRead = digitalRead(BTNLEFT);
 
-  // If coin was inserted, turn LEDs smothly on
-  if (btnCoinRead == LOW){
+  // Check Button Coin
+  if (checkBtnCoin()){
     coinWasInserted();
   }
 
