@@ -31,7 +31,8 @@ int creditCountFlashDelay = 250;
 
 // Credit 
 int creditCount = 0;
-int secretCredit = 3;
+int secretCredit = 5;
+int allowMultipleTimes = 3;
 int secretLeftCnt = 0;
 int secretRightCnt = 0;
 int secretLeft = 3;
@@ -182,7 +183,9 @@ void btnLeftClick(){
       incCredit();
     }
     showCreditCount();  
-    secretCredit = 0; 
+    if (allowMultipleTimes-- == 0) {
+      secretCredit = 0; 
+    }
   }
 
   if (secretRightCnt > 0 || ++secretLeftCnt > secretLeft){
