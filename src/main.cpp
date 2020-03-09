@@ -221,7 +221,6 @@ void setup() {
   btnRight.attachClick(btnRightClick);
   
   servoCounter.Init();
-  Serial.begin(9600);
 }
 
 // The main loop

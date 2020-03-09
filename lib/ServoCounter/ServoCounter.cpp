@@ -27,12 +27,6 @@ void ServoCounter::moveTo(uint8_t number){
   int posDeci = _minDeci - (actDeci * 15);
   int posDigit = _minDigit + (actDigit * 15);
 
-  Serial.print("posDeci: ");
-  Serial.print(posDeci);
-  Serial.print(" - posDigit: ");
-  Serial.print(posDigit);
-  Serial.println();
-
   for (uint8_t i = 0; i < 15; i++)
   {
     posDeci += stepDeci;
@@ -40,11 +34,6 @@ void ServoCounter::moveTo(uint8_t number){
     _servoDigit.write(posDigit);
     _servoDeci.write(posDeci);
     delay(_moveDelay);
-    Serial.print("posDeci: ");
-    Serial.print(posDeci);
-    Serial.print(" - posDigit: ");    
-    Serial.print(posDigit);
-    Serial.println();
   }
   
   _actPos = number;
