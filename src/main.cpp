@@ -1,11 +1,14 @@
 #include <Servo.h>
 #include <Arduino.h>
 #include <OneButton.h>
+#include <ServoCounter.h>
 
 // Servo declaration
 Servo servoRight;
 Servo servoLeft;
 Servo servoArrow;
+
+ServoCounter servoCounter(8,9);
 
 // Buttons
 const int BTNCOIN = 7;
@@ -100,7 +103,7 @@ void blinkLEDs(){
 }
 
 // Check if user has credit
-bool checkCredit() {
+bool hasCredit() {
   return creditCount > 0;  
 }
 
@@ -109,38 +112,26 @@ void incCredit() {
   creditCount++;
 }
 
-// Flash red LED as many credit is left
+// Set LED state regarding the credit count
 void setLEDState(){  
-  if (creditCount > 0) {
-    digitalWrite(LEDGREEN, HIGH);
-    digitalWrite(LEDRED, LOW);
-  } else{
-    digitalWrite(LEDGREEN, LOW);
-    digitalWrite(LEDRED, HIGH);
-  }
+  digitalWrite(LEDGREEN, hasCredit() ? HIGH : LOW);
+  digitalWrite(LEDRED, hasCredit() ? LOW : HIGH);
 }
 
 // Flash red LED as many credit is left
 void showCreditCount(){  
+  servoCounter.Set(creditCount);
   setLEDState();
-  for (int i = 0; i < creditCount; i++){
-    delay(creditCountFlashDelay);
-    digitalWrite(LEDRED, HIGH);    
-    delay(creditCountFlashDelay);
-    digitalWrite(LEDRED, LOW);    
-  }  
 }
 
 // Decrement credit count
 void decCredit() {  
-  if (creditCount > 0) {
-    creditCount--;
-  }
+  creditCount = hasCredit() ? creditCount - 1 : 0;
 }
 
 // Deilver the left column
 void deliverLeftColumn(){
-  delay(200);
+  delay(100);
   blinkLEDs();
   moveArrowToLeft();  
   moveServoLeft();
@@ -151,7 +142,7 @@ void deliverLeftColumn(){
 
 // Deilver the right column
 void deliverRightColumn(){
-  delay(200);     
+  delay(100);     
   blinkLEDs();
   moveArrowToRight();
   moveServoRight();  
@@ -161,7 +152,7 @@ void deliverRightColumn(){
 }
 
 // Move each servo in base position
-void moveServoToBasePos(){
+void moveServosToBasePos(){
   servoLeft.write(minPosLeft);
   servoRight.write(0);
   servoArrow.write(maxPosArrow / 2);    
@@ -180,7 +171,7 @@ bool checkBtnCoin(){
 
 // Left button was pushed
 void btnLeftClick(){
-  if (checkCredit()) {
+  if (hasCredit()) {
     deliverLeftColumn();
     return;
   }
@@ -201,7 +192,7 @@ void btnLeftClick(){
 
 // Right button was pushed
 void btnRightClick() {
-  if (checkCredit()) {
+  if (hasCredit()) {
     deliverRightColumn();
     return;
   }
@@ -225,11 +216,14 @@ void setup() {
   // attach buttons
   btnLeft.attachClick(btnLeftClick);
   btnRight.attachClick(btnRightClick);
+  
+  servoCounter.Init();
+  Serial.begin(9600);
 }
 
 // The main loop
 void loop() {
-  moveServoToBasePos();
+  moveServosToBasePos();
   setLEDState();
 
   // Check wether one button was pushed
