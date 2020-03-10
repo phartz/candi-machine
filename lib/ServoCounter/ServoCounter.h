@@ -12,11 +12,11 @@ private:
 
   uint8_t _actPos;
 
-  uint8_t _minDigit = 30;
-  uint8_t _maxDigit = 180;
+  uint8_t _minDigit = 28;
+  uint8_t _maxDigit = 178;
 
-  uint8_t _minDeci = 160;
-  uint8_t _maxDeci = 10;
+  uint8_t _minDeci = 158;
+  uint8_t _maxDeci = 8;
   
   uint8_t _pinDigit = 0;
   uint8_t _pinDeci = 0;
