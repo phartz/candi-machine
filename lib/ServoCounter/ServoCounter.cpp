@@ -14,15 +14,15 @@ void ServoCounter::Init(){
   _servoDeci.write(_minDeci);
 }
 
-void ServoCounter::moveTo(uint8_t number){
+void ServoCounter::moveTo(uint8_t targetPos){
   int actDeci = _actPos / 10;
   int actDigit = _actPos % 10;
 
-  int nextDeci = number / 10;
-  int nextDigit = number % 10;
+  int nextDeci = targetPos / 10;
+  int nextDigit = targetPos % 10;
 
-  int stepDeci = (nextDeci - actDeci) * -1;
-  int stepDigit = nextDigit - actDigit;
+  int stepDeci = ((targetPos / 10) - (_actPos / 10)) * -1;
+  int stepDigit = (targetPos % 10) - ( _actPos % 10);
 
   int posDeci = _minDeci - (actDeci * 15);
   int posDigit = _minDigit + (actDigit * 15);
@@ -36,7 +36,7 @@ void ServoCounter::moveTo(uint8_t number){
     delay(_moveDelay);
   }
   
-  _actPos = number;
+  _actPos = targetPos;
 }
 
 
